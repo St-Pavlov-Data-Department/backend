@@ -1,0 +1,91 @@
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: rgba(51, 51, 51, 0.85);
+    color: #fff;
+    backdrop-filter: blur(20px);
+    padding: 10px;
+    font-family: Arial, sans-serif;
+    text-align: center;
+}
+
+.fixed-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 255;
+}
+
+.header-title {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.buttons-right {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.header .button {
+    color: #fff;
+    background-color: #555;
+    padding: 10px 20px;
+    margin: 5px;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+.header .button:hover {
+    background-color: #444;
+}
+
+.image-banner {
+    display: flex;
+    justify-content: center; /* Centers the image horizontally  */
+    align-items: center; /* Centers the image vertically */
+    padding: 20px 0px; /* Adds top and bottom padding */
+}
+
+.image-banner img {
+    max-width: 100%; /* Makes sure the image doesn't go out of boundary */
+    height: auto; /* Keeps the aspect ratio of the image the same */
+}
+
+.notification-board {
+    width: 100%;
+    padding: 20px;
+    text-align: center;
+    background-color: #efa052; /* Red background */
+    color: white; /* White text color */
+    box-sizing: border-box;
+    top: 0; /* Place the element at the top of the page */
+    z-index: 99; /* Make sure it sits on top of the page */
+}
+
+.notification-board p {
+    margin: 0;
+    padding: 0;
+}
+
+.items {
+    margin: 20px;
+    background-color: #fff;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.1);
+}
+
+.items p {
+    margin-left: 20px;
+    margin-right: 20px;
+}

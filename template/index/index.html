@@ -1,0 +1,31 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>St.Pavlov Data Department</title>
+    <link rel="icon" href="/static/resources/reverse1999.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="/static/resources/reverse1999.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/static/css/index.css">
+</head>
+<body>
+<div class="header fixed-header">
+    <div class="header-title">
+        <h1>St.Pavlov Data Department</h1>
+    </div>
+</div>
+<div class="image-banner">
+    <img src="https://s3api.wanz.site/image/reverse1999.jpg" alt="Saint Pavlov Data Department">
+</div>
+<div class="notification-board">
+    <p>
+        This site is under construction. Please check back later.
+    </p>
+</div>
+<div class="items">
+    {{ range .Items }}
+    <p>{{ . }}</p>
+    {{ end }}
+</div>
+<br>
+</body>
+</html>
