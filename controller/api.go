@@ -29,6 +29,8 @@ func (r *PavlovController) init() {
 	gin.SetMode(r.Cfg.GinMode)
 
 	ginRouter := gin.New()
+	ginRouter.LoadHTMLGlob("template/**/*")
+	ginRouter.Static("./static", "static")
 
 	r.router = ginRouter
 
