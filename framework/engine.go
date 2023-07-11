@@ -33,13 +33,13 @@ func (e *PavlovEngine) Init() error {
 	case os.IsNotExist(err):
 		logger.WithField("config_filepath", constants.PavlovConfigFilePath).
 			Warnf("No configuration file detected, generating one. You can ignore this warning if it is the first time running.")
-		err = e.generateExampleConfig(constants.PavlovConfigFilePath)
+		err = generateExampleConfig(constants.PavlovConfigFilePath)
 		if err != nil {
 			logger.WithError(err).
 				Errorf("failed to generate example config, exitting")
 			return err
 		}
-		return constants.ExampleConfigGeneratedErr
+		return constants.ErrExampleConfigGenerated
 
 	case err != nil:
 		logger.WithError(err).
@@ -51,7 +51,7 @@ func (e *PavlovEngine) Init() error {
 		if fileInfo.IsDir() {
 			logger.WithField("config_filepath", constants.PavlovConfigFilePath).
 				Errorf("Detected configuration file path, but the path is a directory instead of a file")
-			return constants.ConfigPathNotFileErr
+			return constants.ErrConfigPathNotFile
 		} else {
 			logger.WithField("config_filepath", constants.PavlovConfigFilePath).
 				Infof("Detected configuration file, starting with existing configuration file")
