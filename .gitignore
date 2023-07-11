@@ -3,6 +3,7 @@
 .idea/
 
 # Binaries for programs and plugins
+stpavlov-backend
 backend
 *.exe
 *.exe~

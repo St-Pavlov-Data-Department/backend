@@ -11,6 +11,10 @@ const (
 	PavlovConfigPath = "./"
 )
 
+const (
+	DSNFormat = "%s:%s@tcp(%s:%s)/%s?timeout=%ds&charset=utf8mb4&parseTime=True&loc=Local"
+)
+
 var (
 	PavlovConfigFilePath = path.Join(
 		PavlovConfigPath,
