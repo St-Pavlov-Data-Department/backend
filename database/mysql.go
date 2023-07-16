@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/St-Pavlov-Data-Department/backend/config"
 	"github.com/St-Pavlov-Data-Department/backend/constants"
+	"github.com/St-Pavlov-Data-Department/backend/datamodel"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -52,6 +53,8 @@ func ConnectMySQL(connInfo *config.MySQLConnInfo) (*gorm.DB, error) {
 	}
 	sqlDB.SetMaxOpenConns(connInfo.MaxOpenConns)
 	sqlDB.SetMaxIdleConns(connInfo.MaxIdleConns)
+
+	datamodel.InitDataModel(gormDB)
 
 	return gormDB, nil
 }

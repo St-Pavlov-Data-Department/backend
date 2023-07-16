@@ -34,10 +34,12 @@ func (r *PavlovController) init() {
 
 	r.router = ginRouter
 
+	r.router.NoRoute(r._404Handler)
 	// register handlers
 	r.router.GET("/", r.indexHandler)
 
 	// register APIs
+	r.router.GET("/api/version", r.versionHandler)
 	r.router.POST("/api/report", r.reportHandler)
 }
 
