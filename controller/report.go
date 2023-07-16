@@ -1,9 +1,9 @@
 package controller
 
 import (
-	"github.com/St-Pavlov-Data-Department/backend/controller/requests"
 	"github.com/St-Pavlov-Data-Department/backend/datamodel"
 	"github.com/St-Pavlov-Data-Department/backend/log"
+	"github.com/St-Pavlov-Data-Department/backend/requests"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )

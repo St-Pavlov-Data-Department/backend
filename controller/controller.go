@@ -41,6 +41,7 @@ func (r *PavlovController) init() {
 	// register APIs
 	r.router.GET("/api/version", r.versionHandler)
 	r.router.POST("/api/report", r.reportHandler)
+	r.router.GET("/api/matrix", r.matrixHandler)
 }
 
 func (r *PavlovController) ServeHTTP(w http.ResponseWriter, req *http.Request) {
