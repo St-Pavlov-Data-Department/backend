@@ -38,6 +38,9 @@ func (r *PavlovController) init() {
 	// register handlers
 	r.router.GET("/", r.indexHandler)
 
+	// register documentation
+	r.router.GET("/api/doc", r.documentHandler)
+
 	// register APIs
 	r.router.GET("/api/version", r.versionHandler)
 	r.router.POST("/api/report", r.reportHandler)
