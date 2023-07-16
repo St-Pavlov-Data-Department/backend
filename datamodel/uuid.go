@@ -20,7 +20,7 @@ func (u *UUID) TableName() string {
 }
 
 type UUIDModel struct {
-	UUID string `gorm:"column:uuid;unique" json:"uuid"`
+	UUID string `gorm:"column:uuid;index:uk_uuid,unique" json:"uuid"`
 }
 
 func (u *UUIDModel) GetUUID(db *gorm.DB) (*UUID, error) {
