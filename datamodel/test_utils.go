@@ -9,23 +9,30 @@ import (
 	"path/filepath"
 )
 
-func NewTestDB(dbName string, logLevel logger.LogLevel) *gorm.DB {
+func NewTestDB(dbName string, logLevel logger.LogLevel) (
+	*gorm.DB, func(),
+) {
 	dbPath := testDBPath(dbName)
 	fmt.Println("db path: ", dbPath)
-
-	loggerWithLevel := logger.Default.LogMode(logLevel)
 
 	testDB, err := gorm.Open(
 		sqlite.Open(dbPath),
 		&gorm.Config{
-			Logger: loggerWithLevel,
+			Logger: logger.Default.LogMode(logLevel),
 		},
 	)
 	if err != nil {
 		fmt.Println("db err: ", err)
+		return nil, nil
 	}
 
-	return testDB
+	InitDataModel(testDB)
+
+	remove := func() {
+		FreeTestDB(dbName, testDB)
+	}
+
+	return testDB, remove
 }
 
 func testDBPath(dbName string) string {

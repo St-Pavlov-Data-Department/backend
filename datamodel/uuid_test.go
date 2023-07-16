@@ -7,9 +7,8 @@ import (
 )
 
 func Test_UUID_GetUUID(t *testing.T) {
-	testDB := NewTestDB("pavlov", logger.Info)
-	InitDataModel(testDB)
-	defer FreeTestDB("pavlov", testDB)
+	testDB, remove := NewTestDB("Test_UUID_GetUUID", logger.Info)
+	defer remove()
 
 	uuidModel := &UUIDModel{}
 	uuid, err := uuidModel.GetUUID(testDB)

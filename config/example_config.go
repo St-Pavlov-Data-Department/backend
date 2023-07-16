@@ -9,7 +9,7 @@ func ExampleConfig() string {
 	c := `
 log_level = "debug"
 
-listen_addr = "0.0.0.0:8080"
+listen_addr = "0.0.0.0:1999"
 gin_mode = "debug"
 server_shutdown_max_wait_seconds = 5
 
