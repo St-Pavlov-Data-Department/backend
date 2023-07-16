@@ -1,0 +1,217 @@
+openapi: 3.0.3
+info:
+  title: Saint Pavlov Data API
+  description: St.Pavlov Data Department
+  contact:
+    url: https://github.com/St-Pavlov-Data-Department/backend/issues
+  license:
+    name: MIT License
+    url: https://github.com/St-Pavlov-Data-Department/backend/blob/main/LICENSE
+  version: 1.0.0
+servers:
+  - url: https://stpavlov-data.com/api
+
+tags:
+  - name: report
+    description: To upload loot items records
+  - name: matrix
+    description: Suppose there is a matrix using stageId as row and itemId as column. Each element in the matrix represents the statistical data for that item in the stage. We will have a huge sparse matrix for all the items and stages, and for each server.
+
+paths:
+  /report:
+    post:
+      tags:
+        - report
+      summary: Upload a new report
+      description: Upload a new loot item report to St.Pavlov Data Department
+      operationId: postReport
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReportRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful upload
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error_code: 
+                    $ref: '#/components/schemas/ErrorCode'
+                  error_message:
+                    $ref: '#/components/schemas/ErrorMessage'
+                  data: 
+                    $ref: '#/components/schemas/ReportResponse'
+  
+  /matrix:
+    get:
+      tags:
+        - matrix
+      summary: Get Matrix Result
+      description: This endpoint allows you to get matrix results with or without filter conditions
+      operationId: getMatrix
+      parameters:
+        - name: stages
+          in: query
+          description: filter by stage ids. this parameter should be an array of stage_id separated by comma `,`
+          required: false
+          explode: true
+          schema:
+            type: string
+            default: ""
+            example: "102030#1"
+        - name: items
+          in: query
+          description: filter by item ids. this parameter should be an array of item_id separated by comma `,`
+          required: false
+          explode: true
+          schema:
+            type: string
+            default: ""
+            example: "100001"
+        - name: server
+          in: query
+          description: filter matrix data by their source regional game server
+          required: false
+          explode: true
+          schema:
+            type: string
+            default: "CN"
+            enum: 
+              - CN
+            example: "CN"
+        - name: show_closed_stages
+          in: query
+          description: show closed zones and stages or not
+          required: false
+          schema:
+            type: boolean
+            default: false
+            enum:
+              - true
+              - false
+            example: true
+        - name: personal_data
+          in: query
+          description: provide user_id in order to use personal loot data statistics rather than global data. may avoid the interference of malicious data pollution
+          required: false
+          schema:
+            type: string
+            default: ""
+            example: "user_id_string"
+      responses:
+        "200":
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error_code: 
+                    $ref: '#/components/schemas/ErrorCode'
+                  error_message:
+                    $ref: '#/components/schemas/ErrorMessage'
+                  data:
+                    $ref: "#/components/schemas/MatrixResponse"
+      
+
+components:
+  schemas:
+    ErrorCode:
+      type: integer
+      format: int64
+      example: 0
+    ErrorMessage:
+      type: string
+      example: ""
+    
+    stage_id:
+      description: the in-game id of one stage
+      type: string
+      example: "102030#1"
+    item_id:
+      description: the in-game id of one item
+      type: string
+      example: "100001"
+    
+    ReportRequest:
+      type: object
+      properties:
+        stage_id:
+          $ref: "#/components/schemas/stage_id"
+        server:
+          description: indicates which regional game server the report belongs to
+          type: string
+          example: "CN"
+        source:
+          description: The source is used to mark the client sending this request.
+          type: string
+          example: "MAA1999"
+        version:
+          description: version of the source client.
+          type: string
+          example: "1.99.9"
+        loot:
+          type: array
+          items:
+            $ref: '#/components/schemas/LootItem'
+    LootItem:
+      type: object
+      properties:
+        item_id:
+          $ref: "#/components/schemas/item_id"
+        loot_type:
+          type: string
+          enum:
+            - "FIXED"
+            - "CHANCE"
+          example: "FIXED"
+        quantity:
+          type: integer
+          format: int64
+          example: 2
+    ReportResponse:
+      type: object
+      properties:
+        report_uuid:
+          type: string
+          example: "16-character-hex"
+    MatrixResponse:
+      type: array
+      items:
+        $ref: "#/components/schemas/MatrixPoint"
+    MatrixPoint:
+      type: object
+      properties:
+        stage_id:
+          $ref: "#/components/schemas/stage_id"
+        item_id:
+          $ref: "#/components/schemas/item_id"
+        start_time_milli:
+          description: millisecond timestamp of the start of statistic interval
+          type: number
+          format: int64
+          example: 1556677000000
+        end_time_milli:
+          description: millisecond timestamp of the end of statistic interval
+          type: number
+          format: int64
+          example: 1667788000000
+        quantity:
+          description: total number of loot items during the interval
+          type: number
+          format: int64
+          example: 10001
+        replay_count:
+          description: |-
+            the total replay count of this stage. a `x1` replay is considered 1 count, a `x2` replay is considered 2 counts, and so on. `CAREFUL`: the value can be 0, so please be careful when handling calculations with this value.
+          type: number
+          format: int64
+          example: 50006
+
+
+      
+  
