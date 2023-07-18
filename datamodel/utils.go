@@ -13,4 +13,5 @@ func InitDataModel(db *gorm.DB) {
 	_ = db.AutoMigrate(&LootReport{})
 	_ = db.AutoMigrate(&LootItem{})
 
+	_ = db.AutoMigrate(&Matrix{})
 }

@@ -12,6 +12,13 @@ func (r *PavlovController) indexHandler(c *gin.Context) {
 
 	c.HTML(http.StatusOK,
 		"index.html",
-		nil,
+		gin.H{
+			"Items": []interface{}{
+				map[string]string{
+					"name": "API Document",
+					"url":  "/api/doc",
+				},
+			},
+		},
 	)
 }

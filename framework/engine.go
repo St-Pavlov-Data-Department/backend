@@ -86,6 +86,8 @@ func (e *PavlovEngine) Init() error {
 		return err
 	}
 
+	// init tasks
+
 	// init router
 	e.InitHTTPServer()
 
