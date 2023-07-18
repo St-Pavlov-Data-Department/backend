@@ -4,6 +4,7 @@ import (
 	"github.com/St-Pavlov-Data-Department/backend/datamodel"
 	"github.com/St-Pavlov-Data-Department/backend/log"
 	"github.com/St-Pavlov-Data-Department/backend/requests"
+	"github.com/St-Pavlov-Data-Department/backend/utils"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
@@ -12,7 +13,7 @@ func (r *PavlovController) reportHandler(c *gin.Context) {
 	logger := log.CurrentModuleLogger()
 	logger.Info("reportHandler")
 
-	request := &requests.ReportRequest{}
+	request := &requests.UploadReportRequest{}
 	if err := c.ShouldBind(request); err != nil {
 		logger.WithError(err).
 			Errorf("gin context bind parameter error")
@@ -32,15 +33,15 @@ type ReportResponse struct {
 	ReportUUID string `json:"report_uuid"`
 }
 
-func (r *PavlovController) report(req *requests.ReportRequest) (resp *ReportResponse, err error) {
+func (r *PavlovController) report(req *requests.UploadReportRequest) (resp *ReportResponse, err error) {
 	logger := log.CurrentModuleLogger()
-	logger.WithField("ReportRequest", req).Info("")
+	logger.WithField("UploadReportRequest", req).Info("")
 
 	response := &ReportResponse{}
 
 	// wrap the creation of loot items and the report itself
 	// into a single transaction
-	if err := WithTransaction(r.db, func(tx *gorm.DB) error {
+	if err := utils.WithTransaction(r.db, func(tx *gorm.DB) error {
 		lootReport := &datamodel.LootReport{
 			Server:   req.Server,
 			Source:   req.Source,

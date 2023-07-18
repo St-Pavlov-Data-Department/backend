@@ -1,12 +1,14 @@
 <!-- templates/index.html -->
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <title>St.Pavlov Data Department</title>
     <link rel="icon" href="/static/resources/reverse1999.ico" type="image/x-icon">
     <link rel="shortcut icon" href="/static/resources/reverse1999.ico" type="image/x-icon">
     <link rel="stylesheet" href="/static/css/index.css">
 </head>
+
 <body>
 <div class="header fixed-header">
     <div class="header-title">
@@ -26,9 +28,26 @@
 </div>
 <div class="items">
     {{ range .Items }}
-    <p>{{ . }}</p>
+    <a href="{{ .url }}">{{ .name }}</a>
     {{ end }}
 </div>
-<br>
+
+<canvas class="background"></canvas>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/particlesjs/2.2.2/particles.min.js"></script>
 </body>
+
+<script>
+    window.onload = function() {
+        Particles.init({
+            selector: '.background',
+            color: [
+                "rgba(255,255,255,0.5)",
+                "rgba(255,199,150,0.5)",
+                "rgba(51,45,41,0.5)",
+            ],
+            sizeVariations: 6,
+        });
+    };
+</script>
+
 </html>

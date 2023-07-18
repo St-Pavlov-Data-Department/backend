@@ -3,7 +3,6 @@ package controller
 import (
 	"github.com/St-Pavlov-Data-Department/backend/constants"
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 	"net/http"
 )
 
@@ -33,17 +32,4 @@ func RespJSON(c *gin.Context, data interface{}, errorCode int64, errorMessage st
 			"data":          data,
 		},
 	)
-}
-
-// -------- Database
-
-func WithTransaction(db *gorm.DB, f func(*gorm.DB) error) error {
-	transaction := db.Begin()
-	err := f(db)
-	if err != nil {
-		transaction.Rollback()
-	} else {
-		transaction.Commit()
-	}
-	return err
 }

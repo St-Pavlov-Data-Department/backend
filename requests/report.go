@@ -1,6 +1,6 @@
 package requests
 
-type ReportRequest struct {
+type UploadReportRequest struct {
 	StageID string `json:"stage_id"`
 	Server  string `json:"server"`
 	Source  string `json:"source"`
@@ -16,4 +16,13 @@ type LootItem struct {
 	ItemID   string `json:"item_id"`
 	LootType string `json:"loot_type"`
 	Quantity int64  `json:"quantity"`
+}
+
+// --------
+
+// QueryReportRequest request for querying reports
+type QueryReportRequest struct {
+	Server string
+	Stages []string
+	Items  []string
 }
