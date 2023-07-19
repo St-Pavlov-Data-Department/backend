@@ -6,7 +6,7 @@ type LootItem struct {
 	IDModelIntrinsic
 	ReportUUID string `gorm:"column:report_uuid;index:idx_report_uuid" json:"report_uuid"`
 
-	ItemID   string `gorm:"column:item_id" json:"item_id"`
+	ItemID   int64  `gorm:"column:item_id" json:"item_id"`
 	LootType string `gorm:"column:loot_type" json:"loot_type"`
 	Quantity int64  `gorm:"column:quantity" json:"quantity"`
 
@@ -42,4 +42,3 @@ func (l *LootItemList) LoadByReportUUID(db *gorm.DB, reportUUID string) error {
 	}
 	return nil
 }
-

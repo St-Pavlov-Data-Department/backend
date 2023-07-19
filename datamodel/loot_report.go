@@ -9,7 +9,7 @@ import (
 type LootReport struct {
 	IDModelIntrinsic
 
-	StageID string `gorm:"column:stage_id;index:idx_server_stage,priority:2" json:"stage_id"`
+	StageID int64  `gorm:"column:stage_id;index:idx_server_stage,priority:2" json:"stage_id"`
 	Server  string `gorm:"column:server;index:idx_server_stage,priority:1" json:"server"`
 	Source  string `gorm:"column:source" json:"source"`
 	Version string `gorm:"column:version" json:"version"`

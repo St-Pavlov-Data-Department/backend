@@ -6,7 +6,6 @@ import (
 	"github.com/St-Pavlov-Data-Department/backend/requests"
 	"github.com/St-Pavlov-Data-Department/backend/utils"
 	"github.com/gin-gonic/gin"
-	"strings"
 )
 
 func (r *PavlovController) matrixHandler(c *gin.Context) {
@@ -23,8 +22,8 @@ func (r *PavlovController) matrixHandler(c *gin.Context) {
 		}
 	*/
 
-	request.Stages = strings.Split(c.Query("stages"), ",")
-	request.Items = strings.Split(c.Query("items"), ",")
+	request.Stages = utils.StoInt64Arr(c.Query("stages"))
+	request.Items = utils.StoInt64Arr(c.Query("items"))
 	request.Server = c.Query("server")
 
 	response, err := r.getMatrix(request)
@@ -37,12 +36,12 @@ func (r *PavlovController) matrixHandler(c *gin.Context) {
 type MatrixArray []*MatrixPoint
 
 type MatrixPoint struct {
-	StageId        string `json:"stage_id"`
-	ItemId         string `json:"item_id"`
-	StartTimeMilli int64  `json:"start_time_milli"`
-	EndTimeMilli   int64  `json:"end_time_milli"`
-	Quantity       int64  `json:"quantity"`
-	ReplayCount    int64  `json:"replay_count"`
+	StageId        int64 `json:"stage_id"`
+	ItemId         int64 `json:"item_id"`
+	StartTimeMilli int64 `json:"start_time_milli"`
+	EndTimeMilli   int64 `json:"end_time_milli"`
+	Quantity       int64 `json:"quantity"`
+	ReplayCount    int64 `json:"replay_count"`
 }
 
 func (r *PavlovController) getMatrix(req *requests.MatrixRequest) (
@@ -76,18 +75,18 @@ func (r *PavlovController) getMatrix(req *requests.MatrixRequest) (
 	}
 
 	// map[stage_id] replay_count
-	stageReplay := map[string]int64{}
+	stageReplay := map[int64]int64{}
 	// map[stage_id] map[item_id] item_count
-	stageItems := map[string]map[string]int64{}
+	stageItems := map[int64]map[int64]int64{}
 
 	// merge data
-	stageSet := utils.NewSet[string](req.Stages...)
+	stageSet := utils.NewSet[int64](req.Stages...)
 	for _, r := range reportList {
 		if stageSet.Contains(r.StageID) {
 			stageReplay[r.StageID] += r.ReplayLevel
 			for _, item := range r.Loot {
 				if _, ok := stageItems[r.StageID]; !ok {
-					stageItems[r.StageID] = map[string]int64{}
+					stageItems[r.StageID] = map[int64]int64{}
 				}
 				stageItems[r.StageID][item.ItemID] += item.Quantity
 			}

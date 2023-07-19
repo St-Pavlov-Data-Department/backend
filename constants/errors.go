@@ -17,5 +17,5 @@ var (
 	ErrConfMySQLPasswordUnset = errors.New("mysql password not set")
 	ErrConfMySQLHostUnset     = errors.New("mysql host not set")
 	ErrConfMySQLPortUnset     = errors.New("mysql port not set")
-	ErrConfMySQLDBNameUnset     = errors.New("mysql db_name not set")
+	ErrConfMySQLDBNameUnset   = errors.New("mysql db_name not set")
 )

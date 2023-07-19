@@ -5,6 +5,7 @@ import (
 	"github.com/St-Pavlov-Data-Department/backend/config"
 	"github.com/St-Pavlov-Data-Department/backend/constants"
 	"github.com/St-Pavlov-Data-Department/backend/controller"
+	"github.com/St-Pavlov-Data-Department/backend/gameresource"
 	"github.com/St-Pavlov-Data-Department/backend/log"
 	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
@@ -16,9 +17,10 @@ import (
 type PavlovEngine struct {
 	Cfg *config.Config
 
-	Logger *logrus.Logger
-	Server *http.Server
-	Db     *gorm.DB
+	Logger       *logrus.Logger
+	Server       *http.Server
+	Db           *gorm.DB
+	GameResource *gameresource.Resource
 }
 
 func New() *PavlovEngine {
@@ -79,6 +81,14 @@ func (e *PavlovEngine) Init() error {
 	}
 	e.Logger = log.StandardLogger()
 
+	// load game resources
+	e.GameResource, err = gameresource.NewFromPath(e.Cfg.GameResourcePath)
+	if err != nil {
+		logger.WithError(err).
+			Errorf("load game resource error")
+		return err
+	}
+
 	// init database
 	if err := e.connectDB(); err != nil {
 		logger.WithError(err).
@@ -97,7 +107,7 @@ func (e *PavlovEngine) Init() error {
 func (e *PavlovEngine) InitHTTPServer() {
 
 	apiController := controller.New(
-		e.Cfg, e.Db,
+		e.Cfg, e.Db, e.GameResource,
 	)
 
 	e.Server = &http.Server{
@@ -110,8 +120,8 @@ func (e *PavlovEngine) StartService() {
 
 	go func() {
 		if err := e.Server.ListenAndServe(); err != nil {
-			e.Logger.WithField("listen_error", err).
-				Infof("router error while listening")
+			e.Logger.WithError(err).
+				Error("router error while listening")
 		}
 	}()
 

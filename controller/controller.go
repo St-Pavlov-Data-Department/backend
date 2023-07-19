@@ -2,21 +2,24 @@ package controller
 
 import (
 	"github.com/St-Pavlov-Data-Department/backend/config"
+	"github.com/St-Pavlov-Data-Department/backend/gameresource"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 	"net/http"
 )
 
 type PavlovController struct {
-	Cfg    *config.Config
-	router *gin.Engine
-	db     *gorm.DB
+	Cfg          *config.Config
+	router       *gin.Engine
+	db           *gorm.DB
+	gameResource *gameresource.Resource
 }
 
-func New(cfg *config.Config, db *gorm.DB) *PavlovController {
+func New(cfg *config.Config, db *gorm.DB, gameResource *gameresource.Resource) *PavlovController {
 	controller := &PavlovController{
-		Cfg: cfg,
-		db:  db,
+		Cfg:          cfg,
+		db:           db,
+		gameResource: gameResource,
 	}
 	controller.init()
 

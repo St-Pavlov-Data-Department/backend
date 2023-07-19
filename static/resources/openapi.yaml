@@ -56,22 +56,22 @@ paths:
       parameters:
         - name: stages
           in: query
-          description: filter by stage ids. this parameter should be an array of stage_id separated by comma `,`
+          description: filter by stage ids `int64`. this parameter should be an array of stage_id separated by comma `,`
           required: false
           explode: true
           schema:
             type: string
             default: ""
-            example: "102030#1"
+            example: "10110,10160"
         - name: items
           in: query
-          description: filter by item ids. this parameter should be an array of item_id separated by comma `,`
+          description: filter by item ids `int64`. this parameter should be an array of item_id separated by comma `,`
           required: false
           explode: true
           schema:
             type: string
             default: ""
-            example: "100001"
+            example: "110101,110102"
         - name: server
           in: query
           description: filter matrix data by their source regional game server
@@ -130,12 +130,14 @@ components:
     
     stage_id:
       description: the in-game id of one stage
-      type: string
-      example: "102030#1"
+      type: integer
+      format: int64
+      example: 102030
     item_id:
       description: the in-game id of one item
-      type: string
-      example: "100001"
+      type: integer
+      format: int64
+      example: 100001
     
     ReportRequest:
       type: object

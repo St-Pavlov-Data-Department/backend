@@ -13,7 +13,7 @@ listen_addr = "0.0.0.0:1999"
 gin_mode = "debug"
 server_shutdown_max_wait_seconds = 5
 
-# sqlite_path = "./pavlov_sqlite.db"
+game_resource_path = "/repo/github.com/1999GameResource"
 
 [db_conn_info]
 username = "user"

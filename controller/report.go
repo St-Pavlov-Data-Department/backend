@@ -1,12 +1,14 @@
 package controller
 
 import (
+	"fmt"
 	"github.com/St-Pavlov-Data-Department/backend/datamodel"
 	"github.com/St-Pavlov-Data-Department/backend/log"
 	"github.com/St-Pavlov-Data-Department/backend/requests"
 	"github.com/St-Pavlov-Data-Department/backend/utils"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
+	"strings"
 )
 
 func (r *PavlovController) reportHandler(c *gin.Context) {
@@ -36,6 +38,19 @@ type ReportResponse struct {
 func (r *PavlovController) report(req *requests.UploadReportRequest) (resp *ReportResponse, err error) {
 	logger := log.CurrentModuleLogger()
 	logger.WithField("UploadReportRequest", req).Info("")
+
+	// validate report info
+	if err := r.validateReportStage(req); err != nil {
+		logger.WithError(err).Error("validateReportStage error")
+		return nil, err
+	}
+
+	for _, item := range req.Loot {
+		if err := r.validateReportItem(req, item); err != nil {
+			logger.WithError(err).Error("validateReportItem error")
+			return nil, err
+		}
+	}
 
 	response := &ReportResponse{}
 
@@ -80,4 +95,31 @@ func (r *PavlovController) report(req *requests.UploadReportRequest) (resp *Repo
 	}
 
 	return response, nil
+}
+
+func (r *PavlovController) validateReportStage(report *requests.UploadReportRequest) error {
+	if !r.gameResource.Episode.Contains(report.StageID) {
+		return fmt.Errorf("stage_id: %d not exist", report.StageID)
+	}
+
+	// TODO: for time-limited stages, validate the stage active time range
+
+	return nil
+}
+
+func (r *PavlovController) validateReportItem(report *requests.UploadReportRequest, item *requests.LootItem) error {
+	gameItem, ok := r.gameResource.Item.Get(item.ItemID)
+	if !ok {
+		// item_id not exist
+		return fmt.Errorf("item_id: %d not exist", item.ItemID)
+	}
+
+	itemSourceStages := utils.NewSet(strings.Split(gameItem.Sources, "|")...)
+
+	if !itemSourceStages.Contains(fmt.Sprintf("%d", report.StageID)) {
+		// item could not come from this stage
+		return fmt.Errorf("item_id: %d could not come from this stage_id: %s", item.ItemID, report.StageID)
+	}
+
+	return nil
 }
