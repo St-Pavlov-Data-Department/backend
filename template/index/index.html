@@ -7,6 +7,7 @@
     <link rel="icon" href="/static/resources/reverse1999.ico" type="image/x-icon">
     <link rel="shortcut icon" href="/static/resources/reverse1999.ico" type="image/x-icon">
     <link rel="stylesheet" href="/static/css/index.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
 </head>
 
 <body>
@@ -15,10 +16,15 @@
         <h1>St.Pavlov Data Department</h1>
     </div>
     <div class="buttons-right">
+        <a href="https://github.com/orgs/St-Pavlov-Data-Department/repositories" target="_blank" class="github-button">
+            <i class="fab fa-github"></i> View on GitHub
+        </a>
+    </div>
+    <div class="buttons-right">
         <a href="/api/doc" class="button">API Document</a>
     </div>
 </div>
-<div class="image-banner">
+<div class="image-banner" id="image-banner-placeholder">
     <img src="https://s3api.wanz.site/image/reverse1999.jpg" alt="Saint Pavlov Data Department">
 </div>
 <div class="notification-board">
@@ -28,7 +34,9 @@
 </div>
 <div class="items">
     {{ range .Items }}
-    <a href="{{ .url }}">{{ .name }}</a>
+    <div>
+        <a href="{{ .url }}">{{ .name }}</a>
+    </div>
     {{ end }}
 </div>
 
@@ -38,6 +46,8 @@
 
 <script>
     window.onload = function() {
+        adjustPadding();
+
         Particles.init({
             selector: '.background',
             color: [
@@ -48,6 +58,13 @@
             sizeVariations: 6,
         });
     };
+
+    window.onresize = adjustPadding;
+
+    function adjustPadding() {
+        var headerHeight = document.querySelector('.fixed-header').offsetHeight;
+        document.body.style.paddingTop = headerHeight + 'px';
+    }
 </script>
 
 </html>

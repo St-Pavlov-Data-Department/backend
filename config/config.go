@@ -10,6 +10,9 @@ type Config struct {
 	GinMode                      string `toml:"gin_mode"`
 	ServerShutdownMaxWaitSeconds int    `toml:"server_shutdown_max_wait_seconds"`
 
+	// -------- Resources --------
+	GameResourcePath string `toml:"game_resource_path"`
+
 	// -------- Database --------
 	SqlitePath string `toml:"sqlite_path"`
 

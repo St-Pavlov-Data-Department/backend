@@ -9,6 +9,7 @@ html, body {
     top: 0;
     left: 0;
     z-index: 0;
+    pointer-events: none;
 }
 
 body {
@@ -23,7 +24,7 @@ body {
     background-color: rgba(51, 51, 51, 0.85);
     color: #fff;
     backdrop-filter: blur(8px);
-    padding: 10px;
+    padding: 0px;
     font-family: Arial, sans-serif;
     text-align: center;
 }
@@ -40,6 +41,7 @@ body {
     display: flex;
     justify-content: flex-start;
     align-items: center;
+    margin-left: 20px;
     width: 100%;
 }
 
@@ -63,11 +65,33 @@ body {
     background-color: rgb(255, 223, 164);
 }
 
+.github-button {
+    display: inline-flex;
+    align-items: center;
+    background-color: #333;
+    color: #fff;
+    text-decoration: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-family: Arial, sans-serif;
+    transition: background-color 0.3s ease;
+}
+
+.github-button:hover {
+    background-color: #444;
+}
+
+.github-button i {
+    font-size: 30px;
+    margin-right: 5px;
+}
+
 .image-banner {
     display: flex;
     justify-content: center; /* Centers the image horizontally  */
     align-items: center; /* Centers the image vertically */
-    padding: 20px 0px; /* Adds top and bottom padding */
+    width: 100%;
 }
 
 .image-banner img {
