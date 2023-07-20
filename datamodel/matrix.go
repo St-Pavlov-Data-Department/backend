@@ -8,9 +8,9 @@ import (
 type Matrix struct {
 	IDModelIntrinsic
 
-	StageId        string `gorm:"column:stage_id;index:uk_stage_id_item_id,unique,priority:1;index:idx_server_stage_item,priority:2" json:"stage_id"`
-	ItemId         int64  `gorm:"column:item_id;index:uk_stage_id_item_id,unique,priority:2;index:idx_server_stage_item,priority:3;index:idx_server_item,priority:2" json:"item_id"`
-	Server         string `gorm:"column:server;index:idx_server_stage_item,priority:1;index:idx_server_item,priority:1" json:"server"`
+	EpisodeId      string `gorm:"column:episode_id;index:uk_episodeid_itemid,unique,priority:1;index:idx_server_episodeid_itemid,priority:2" json:"episode_id"`
+	ItemId         int64  `gorm:"column:item_id;index:uk_episodeid_itemid,unique,priority:2;index:idx_server_episodeid_itemid,priority:3;index:idx_server_itemid,priority:2" json:"item_id"`
+	Server         string `gorm:"column:server;index:idx_server_episodeid_itemid,priority:1;index:idx_server_itemid,priority:1" json:"server"`
 	StartTimeMilli int64  `gorm:"column:start_time_milli;index:idx_start_time_milli" json:"start_time_milli"`
 	EndTimeMilli   int64  `gorm:"column:end_time_milli;index:idx_end_time_milli" json:"end_time_milli"`
 	Quantity       int    `gorm:"column:quantity" json:"quantity"`
@@ -32,9 +32,9 @@ func (m *Matrix) Save(db *gorm.DB) error {
 type MatrixList []*Matrix
 
 func (m *MatrixList) LoadByRequest(db *gorm.DB, req *requests.MatrixRequest) error {
-	// filter stages
-	if len(req.Stages) > 0 {
-		db = db.Where("stage_id in (?)", req.Stages)
+	// filter episodes
+	if len(req.Episodes) > 0 {
+		db = db.Where("episode_id in (?)", req.Episodes)
 	}
 
 	// filter items
@@ -47,7 +47,7 @@ func (m *MatrixList) LoadByRequest(db *gorm.DB, req *requests.MatrixRequest) err
 		db = db.Where("server = ?", req.Server)
 	}
 
-	// TODO: show_closed_stages and personal_data parameters are not supported yet.
+	// TODO: show_closed_episodes and personal_data parameters are not supported yet.
 
 	if err := db.Model(&Matrix{}).Find(m).Error; err != nil {
 		return err

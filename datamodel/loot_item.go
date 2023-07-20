@@ -4,7 +4,7 @@ import "gorm.io/gorm"
 
 type LootItem struct {
 	IDModelIntrinsic
-	ReportUUID string `gorm:"column:report_uuid;index:idx_report_uuid" json:"report_uuid"`
+	ReportUUID string `gorm:"column:report_uuid; not null;index:idx_reportuuid" json:"report_uuid"`
 
 	ItemID   int64  `gorm:"column:item_id" json:"item_id"`
 	LootType string `gorm:"column:loot_type" json:"loot_type"`
@@ -36,8 +36,8 @@ func (i *LootItem) Save(db *gorm.DB) error {
 type LootItemList []*LootItem
 
 func (l *LootItemList) LoadByReportUUID(db *gorm.DB, reportUUID string) error {
-	db = db.Where("report_uuid = ?", reportUUID)
-	if err := db.Model(&LootItem{}).Find(l).Error; err != nil {
+	db = db.Model(&LootItem{}).Where("report_uuid = ?", reportUUID)
+	if err := db.Find(l).Error; err != nil {
 		return err
 	}
 	return nil

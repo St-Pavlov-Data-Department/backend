@@ -22,7 +22,7 @@ func (r *PavlovController) matrixHandler(c *gin.Context) {
 		}
 	*/
 
-	request.Stages = utils.StrToInt64Arr(c.Query("stages"))
+	request.Episodes = utils.StrToInt64Arr(c.Query("episodes"))
 	request.Items = utils.StrToInt64Arr(c.Query("items"))
 	request.Server = c.Query("server")
 
@@ -36,7 +36,7 @@ func (r *PavlovController) matrixHandler(c *gin.Context) {
 type MatrixArray []*MatrixPoint
 
 type MatrixPoint struct {
-	StageId        int64 `json:"stage_id"`
+	EpisodeID      int64 `json:"episode_id"`
 	ItemId         int64 `json:"item_id"`
 	StartTimeMilli int64 `json:"start_time_milli"`
 	EndTimeMilli   int64 `json:"end_time_milli"`
@@ -62,9 +62,9 @@ func (r *PavlovController) getMatrix(req *requests.MatrixRequest) (
 
 	// in the early stage of development, just calculate among all the reports first.
 	reportReq := &requests.QueryReportRequest{
-		Server: req.Server,
-		Stages: req.Stages,
-		Items:  req.Items,
+		Server:   req.Server,
+		Episodes: req.Episodes,
+		Items:    req.Items,
 	}
 
 	reportList := datamodel.LootReportList{}
@@ -74,31 +74,28 @@ func (r *PavlovController) getMatrix(req *requests.MatrixRequest) (
 		return nil, err
 	}
 
-	// map[stage_id] replay_count
-	stageReplay := map[int64]int64{}
-	// map[stage_id] map[item_id] item_count
-	stageItems := map[int64]map[int64]int64{}
+	// map[episode_id] replay_count
+	episodeReplay := map[int64]int64{}
+	// map[episode_id] map[item_id] item_count
+	episodeItems := map[int64]map[int64]int64{}
 
 	// merge data
-	stageSet := utils.NewSet[int64](req.Stages...)
 	for _, r := range reportList {
-		if stageSet.Contains(r.StageID) {
-			stageReplay[r.StageID] += r.ReplayLevel
-			for _, item := range r.Loot {
-				if _, ok := stageItems[r.StageID]; !ok {
-					stageItems[r.StageID] = map[int64]int64{}
-				}
-				stageItems[r.StageID][item.ItemID] += item.Quantity
+		episodeReplay[r.EpisodeID] += r.ReplayLevel
+		for _, item := range r.Loot {
+			if _, ok := episodeItems[r.EpisodeID]; !ok {
+				episodeItems[r.EpisodeID] = map[int64]int64{}
 			}
+			episodeItems[r.EpisodeID][item.ItemID] += item.Quantity
 		}
 	}
 
 	var response MatrixArray = make([]*MatrixPoint, 0)
-	for stageId, replayCount := range stageReplay {
-		for itemId, itemCount := range stageItems[stageId] {
+	for episodeID, replayCount := range episodeReplay {
+		for itemId, itemCount := range episodeItems[episodeID] {
 			response = append(response,
 				&MatrixPoint{
-					StageId:        stageId,
+					EpisodeID:      episodeID,
 					ItemId:         itemId,
 					StartTimeMilli: 0, // TODO: collect time rage from reports
 					EndTimeMilli:   0,
@@ -113,7 +110,7 @@ func (r *PavlovController) getMatrix(req *requests.MatrixRequest) (
 		var response MatrixArray = make([]*MatrixPoint, len(matrixList), len(matrixList))
 		for i, m := range matrixList {
 			response[i] = &MatrixPoint{
-				StageId:        m.StageId,
+				EpisodeID:        m.EpisodeID,
 				ItemId:         m.ItemId,
 				StartTimeMilli: m.StartTimeMilli,
 				EndTimeMilli:   m.EndTimeMilli,

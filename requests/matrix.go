@@ -1,9 +1,9 @@
 package requests
 
 type MatrixRequest struct {
-	Stages           []int64 `json:"stages"`
-	Items            []int64 `json:"items"`
-	Server           string  `json:"server"`
-	ShowClosedStages bool    `json:"show_closed_stages"`
-	PersonalData     string  `json:"personal_data"`
+	Episodes           []int64 `json:"episodes"`
+	Items              []int64 `json:"items"`
+	Server             string  `json:"server"`
+	ShowClosedEpisodes bool    `json:"show_closed_episodes"`
+	PersonalData       string  `json:"personal_data"`
 }
