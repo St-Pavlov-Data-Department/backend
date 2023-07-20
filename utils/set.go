@@ -46,3 +46,7 @@ func (s *Set[T]) Size() int {
 func (s *Set[T]) Remove(item T) {
 	delete(s.m, item)
 }
+
+func (s *Set[T]) IsEmpty() bool {
+	return s.Size() == 0
+}

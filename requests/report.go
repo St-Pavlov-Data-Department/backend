@@ -1,10 +1,10 @@
 package requests
 
 type UploadReportRequest struct {
-	StageID int64  `json:"stage_id"`
-	Server  string `json:"server"`
-	Source  string `json:"source"`
-	Version string `json:"version"`
+	EpisodeID int64  `json:"episode_id"`
+	Server    string `json:"server"`
+	Source    string `json:"source"`
+	Version   string `json:"version"`
 
 	Loot        []*LootItem `json:"loot"`
 	ReplayLevel int64       `json:"replay_level"`
@@ -22,7 +22,7 @@ type LootItem struct {
 
 // QueryReportRequest request for querying reports
 type QueryReportRequest struct {
-	Server string
-	Stages []int64
-	Items  []int64
+	Server   string
+	Episodes []int64
+	Items    []int64
 }

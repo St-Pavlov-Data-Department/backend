@@ -15,7 +15,7 @@ tags:
   - name: report
     description: To upload loot items records
   - name: matrix
-    description: Suppose there is a matrix using stageId as row and itemId as column. Each element in the matrix represents the statistical data for that item in the stage. We will have a huge sparse matrix for all the items and stages, and for each server.
+    description: Suppose there is a matrix using episode_id as row and itemId as column. Each element in the matrix represents the statistical data for that item in the episode. We will have a huge sparse matrix for all the items and episodes, and for each server.
 
 paths:
   /report:
@@ -54,9 +54,9 @@ paths:
       description: This endpoint allows you to get matrix results with or without filter conditions
       operationId: getMatrix
       parameters:
-        - name: stages
+        - name: episodes
           in: query
-          description: filter by stage ids `int64`. this parameter should be an array of stage_id separated by comma `,`
+          description: filter by episode ids `int64`. this parameter should be an array of episode_id separated by comma `,`
           required: false
           explode: true
           schema:
@@ -83,9 +83,9 @@ paths:
             enum: 
               - CN
             example: "CN"
-        - name: show_closed_stages
+        - name: show_closed_episodes
           in: query
-          description: show closed zones and stages or not
+          description: show closed zones and episodes or not
           required: false
           schema:
             type: boolean
@@ -128,8 +128,8 @@ components:
       type: string
       example: ""
     
-    stage_id:
-      description: the in-game id of one stage
+    episode_id:
+      description: the in-game id of one episode
       type: integer
       format: int64
       example: 102030
@@ -142,8 +142,8 @@ components:
     ReportRequest:
       type: object
       properties:
-        stage_id:
-          $ref: "#/components/schemas/stage_id"
+        episode_id:
+          $ref: "#/components/schemas/episode_id"
         server:
           description: indicates which regional game server the report belongs to
           type: string
@@ -188,8 +188,8 @@ components:
     MatrixPoint:
       type: object
       properties:
-        stage_id:
-          $ref: "#/components/schemas/stage_id"
+        episode_id:
+          $ref: "#/components/schemas/episode_id"
         item_id:
           $ref: "#/components/schemas/item_id"
         start_time_milli:
@@ -209,7 +209,7 @@ components:
           example: 10001
         replay_count:
           description: |-
-            the total replay count of this stage. a `x1` replay is considered 1 count, a `x2` replay is considered 2 counts, and so on. `CAREFUL`: the value can be 0, so please be careful when handling calculations with this value.
+            the total replay count of this episode. a `x1` replay is considered 1 count, a `x2` replay is considered 2 counts, and so on. `CAREFUL`: the value can be 0, so please be careful when handling calculations with this value.
           type: number
           format: int64
           example: 50006

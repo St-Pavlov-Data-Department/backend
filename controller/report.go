@@ -39,17 +39,10 @@ func (r *PavlovController) report(req *requests.UploadReportRequest) (resp *Repo
 	logger := log.CurrentModuleLogger()
 	logger.WithField("UploadReportRequest", req).Info("")
 
-	// validate report info
-	if err := r.validateReportStage(req); err != nil {
-		logger.WithError(err).Error("validateReportStage error")
+	// validate report request
+	if err := r.validateReportReq(req); err != nil {
+		logger.WithError(err).Error("validateReportReq error")
 		return nil, err
-	}
-
-	for _, item := range req.Loot {
-		if err := r.validateReportItem(req, item); err != nil {
-			logger.WithError(err).Error("validateReportItem error")
-			return nil, err
-		}
 	}
 
 	response := &ReportResponse{}
@@ -63,7 +56,7 @@ func (r *PavlovController) report(req *requests.UploadReportRequest) (resp *Repo
 			Version:  req.Version,
 			ClientIP: req.ClientIP,
 
-			StageID:     req.StageID,
+			EpisodeID:   req.EpisodeID,
 			ReplayLevel: req.ReplayLevel,
 		}
 		if err := lootReport.Save(tx); err != nil {
@@ -97,40 +90,26 @@ func (r *PavlovController) report(req *requests.UploadReportRequest) (resp *Repo
 	return response, nil
 }
 
-func (r *PavlovController) validateReportStage(report *requests.UploadReportRequest) error {
-	if !r.gameResource.Episode.Contains(report.StageID) {
-		return fmt.Errorf("stage_id: %d not exist", report.StageID)
-	}
-
-	// TODO: for time-limited stages, validate the stage active time range
-
-	return nil
-}
-
-func (r *PavlovController) validateReportItem(report *requests.UploadReportRequest, item *requests.LootItem) error {
-	gameItem, ok := r.gameResource.Item.Get(item.ItemID)
+func (r *PavlovController) validateReportReq(report *requests.UploadReportRequest) error {
+	// validate episode_id
+	episodeInfo, ok := r.gameResource.Episode.Get(report.EpisodeID)
 	if !ok {
-		// item_id not exist
-		return fmt.Errorf("item_id: %d not exist", item.ItemID)
+		return fmt.Errorf("episode_id: %d not exist", report.EpisodeID)
 	}
 
-	sourceEpisodes := utils.NewSet(
-		utils.Apply(gameItem.Sources,
+	// TODO: for time-limited episodes, validate the episode active time range
+
+	episodeRewards := utils.NewSet(
+		utils.Apply(episodeInfo.RewardList,
 			func(ref *gameresource.Reference) int64 {
+				// find item id from reference
 				switch ref.Table {
-				case gameresource.JUMP:
-					jump, ok := r.gameResource.Jump.Get(ref.ID)
+				case gameresource.ITEM:
+					item, ok := r.gameResource.Item.Get(ref.ID)
 					if !ok {
 						return 0
 					}
-					if jump.Param.Table != gameresource.EPISODE {
-						return 0
-					}
-					episode, ok := r.gameResource.Episode.Get(jump.Param.ID)
-					if !ok {
-						return 0
-					}
-					return episode.Id
+					return item.Id
 
 				default:
 					return 0
@@ -139,9 +118,17 @@ func (r *PavlovController) validateReportItem(report *requests.UploadReportReque
 		)...,
 	)
 
-	if !sourceEpisodes.Contains(report.StageID) {
-		// item could not come from this stage
-		return fmt.Errorf("item_id: %d could not come from this stage_id: %s", item.ItemID, report.StageID)
+	for _, lootItem := range report.Loot {
+		// validate loot_item
+		if !r.gameResource.Item.Contains(lootItem.ItemID) {
+			// item_id not exist
+			return fmt.Errorf("item_id: %d not exist", lootItem.ItemID)
+		}
+
+		// validate loot_item possible to be found in this episode
+		if !episodeRewards.Contains(lootItem.ItemID) {
+			return fmt.Errorf("item_id: %d could not come from this episode_id: %d", lootItem.ItemID, report.EpisodeID)
+		}
 	}
 
 	return nil
