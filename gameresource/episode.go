@@ -5,6 +5,13 @@ import (
 	"os"
 )
 
+// TODO: refactor: load EpisodeInfoRaw first
+//	and parse into EpisodeInfo
+
+type EpisodeInfoRaw struct {
+	EpisodeInfo
+}
+
 type EpisodeInfo struct {
 	Id                int64  `json:"id"`
 	ChapterId         int    `json:"chapterId"`

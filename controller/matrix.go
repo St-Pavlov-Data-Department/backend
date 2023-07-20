@@ -22,8 +22,8 @@ func (r *PavlovController) matrixHandler(c *gin.Context) {
 		}
 	*/
 
-	request.Stages = utils.StoInt64Arr(c.Query("stages"))
-	request.Items = utils.StoInt64Arr(c.Query("items"))
+	request.Stages = utils.StrToInt64Arr(c.Query("stages"))
+	request.Items = utils.StrToInt64Arr(c.Query("items"))
 	request.Server = c.Query("server")
 
 	response, err := r.getMatrix(request)

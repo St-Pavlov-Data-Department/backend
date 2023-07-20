@@ -3,12 +3,12 @@ package controller
 import (
 	"fmt"
 	"github.com/St-Pavlov-Data-Department/backend/datamodel"
+	"github.com/St-Pavlov-Data-Department/backend/gameresource"
 	"github.com/St-Pavlov-Data-Department/backend/log"
 	"github.com/St-Pavlov-Data-Department/backend/requests"
 	"github.com/St-Pavlov-Data-Department/backend/utils"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
-	"strings"
 )
 
 func (r *PavlovController) reportHandler(c *gin.Context) {
@@ -114,9 +114,32 @@ func (r *PavlovController) validateReportItem(report *requests.UploadReportReque
 		return fmt.Errorf("item_id: %d not exist", item.ItemID)
 	}
 
-	itemSourceStages := utils.NewSet(strings.Split(gameItem.Sources, "|")...)
+	sourceEpisodes := utils.NewSet(
+		utils.Apply(gameItem.Sources,
+			func(ref *gameresource.Reference) int64 {
+				switch ref.Table {
+				case gameresource.JUMP:
+					jump, ok := r.gameResource.Jump.Get(ref.ID)
+					if !ok {
+						return 0
+					}
+					if jump.Param.Table != gameresource.EPISODE {
+						return 0
+					}
+					episode, ok := r.gameResource.Episode.Get(jump.Param.ID)
+					if !ok {
+						return 0
+					}
+					return episode.Id
 
-	if !itemSourceStages.Contains(fmt.Sprintf("%d", report.StageID)) {
+				default:
+					return 0
+				}
+			},
+		)...,
+	)
+
+	if !sourceEpisodes.Contains(report.StageID) {
 		// item could not come from this stage
 		return fmt.Errorf("item_id: %d could not come from this stage_id: %s", item.ItemID, report.StageID)
 	}
