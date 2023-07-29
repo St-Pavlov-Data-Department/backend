@@ -160,6 +160,12 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/LootItem'
+        replay_level:
+          description: |-
+            the total replay count of this episode. a `x1` replay is considered 1 count, a `x2` replay is considered 2 counts, and so on.
+          type: integer
+          format: int64
+          example: 4
     LootItem:
       type: object
       properties:
